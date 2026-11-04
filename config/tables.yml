@@ -1,0 +1,108 @@
+# Data contracts for every table being migrated from the legacy database to the lakehouse.
+# primary_key   : identifies a row in both systems
+# watermark     : column that changes whenever a row changes; drives incremental extracts
+# pii           : columns hashed with SHA-256 before they reach silver; raw values never leave bronze
+# scd2          : attributes whose history is kept (valid_from / valid_to) instead of overwritten
+# expectations  : rows that fail go to the quarantine table instead of silver
+
+hash_salt_env: LAKEHOUSE_PII_SALT   # set this secret in production; the demo uses a fixed salt
+
+tables:
+  recalls:
+    source: NHTSA Recalls API (real)
+    primary_key: [campaign_number, make, model, model_year]
+    watermark: updated_at
+    columns:
+      campaign_number: string
+      make: string
+      model: string
+      model_year: int
+      component: string
+      summary: string
+      remedy: string
+      report_received_date: date
+      park_it: boolean
+      updated_at: timestamp
+    expectations:
+      - name: campaign_number_format
+        rule: "campaign_number RLIKE '^[0-9]{2}V[0-9]{3,6}$'"
+      - name: model_year_range
+        rule: "model_year BETWEEN 1990 AND 2030"
+
+  complaints:
+    source: NHTSA Complaints API (real)
+    primary_key: [odi_number, make, model, model_year]
+    watermark: updated_at
+    columns:
+      odi_number: string
+      make: string
+      model: string
+      model_year: int
+      components: string
+      crash: boolean
+      fire: boolean
+      injuries: int
+      filed_date: date
+      updated_at: timestamp
+    expectations:
+      - name: injuries_not_negative
+        rule: "injuries >= 0"
+      - name: filed_date_present
+        rule: "filed_date IS NOT NULL"
+
+  dealers:
+    source: Dealer master (synthetic)
+    primary_key: [dealer_code]
+    watermark: updated_at
+    scd2: [region, status]
+    columns:
+      dealer_code: string
+      dealer_name: string
+      city: string
+      state: string
+      region: string
+      status: string
+      updated_at: timestamp
+    expectations:
+      - name: status_values
+        rule: "status IN ('active', 'suspended', 'closed')"
+
+  vehicle_owners:
+    source: Owner registry (synthetic)
+    primary_key: [vin]
+    watermark: updated_at
+    pii: [owner_name, email, phone]
+    columns:
+      vin: string
+      make: string
+      model: string
+      model_year: int
+      owner_name: string
+      email: string
+      phone: string
+      preferred_dealer: string
+      updated_at: timestamp
+      is_deleted: boolean
+    expectations:
+      - name: vin_format
+        rule: "vin RLIKE '^[A-HJ-NPR-Z0-9]{17}$'"
+
+  repair_orders:
+    source: Dealer management system (synthetic)
+    primary_key: [repair_order_id]
+    watermark: updated_at
+    columns:
+      repair_order_id: string
+      vin: string
+      dealer_code: string
+      campaign_number: string
+      status: string
+      opened_at: date
+      completed_at: date
+      updated_at: timestamp
+      is_deleted: boolean
+    expectations:
+      - name: status_values
+        rule: "status IN ('open', 'scheduled', 'completed', 'cancelled')"
+      - name: completed_after_opened
+        rule: "completed_at IS NULL OR completed_at >= opened_at"
