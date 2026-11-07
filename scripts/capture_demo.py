@@ -32,11 +32,6 @@ def main(chrome: str = "") -> None:
             frames.append(Image.open(io.BytesIO(page.screenshot())).convert("P", palette=Image.ADAPTIVE, colors=128))
 
         frame()
-        blocked = page.locator("button.btn:has-text('is blocked')")
-        if blocked.count():
-            blocked.first.click()
-            page.wait_for_timeout(600)
-            frame()
         for tab in ("Nightly loads", "Recall completion", "Pipeline"):
             page.click(f"#nav a:has-text('{tab}')")
             page.evaluate("window.scrollTo(0, 0)")

@@ -29,7 +29,7 @@ Most on-prem to cloud migrations do not fail on the copy. They fail on trust. No
 ## 2-minute tour
 
 1. Open the [board](https://alexagonzalestuesta.github.io/legacy-to-lakehouse/). Four of five tables are ready for cutover.
-2. Click **see why repair_orders is blocked**. Eight legacy rows were quarantined: 5 with an invalid status, 3 completed before they were opened. The panel gives example keys and the query to see them.
+2. The blocked **repair_orders** row opens on its own. Eight legacy rows were quarantined: 5 with an invalid status, 3 completed before they were opened. The panel gives example keys and the query to see them.
 3. Open **Nightly loads** in the left menu. Each night processes about 216 rows instead of 19,840.
 4. Open **Recall completion**. The gold table ranks real GM recall campaigns by how many affected vehicles have been repaired; switch to **Dealers** for the dealers furthest behind.
 5. Open **Pipeline** to see row counts in every layer and the dealer history kept by SCD Type 2.
