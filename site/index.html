@@ -5,20 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Legacy to Lakehouse · Cutover readiness</title>
 <meta name="description" content="Cutover readiness for a legacy SQL database migrated to a Databricks lakehouse with PySpark: reconciliation, nightly incremental loads and recall completion.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 fill=%27%238a3f17%27/%3E%3Cpath d=%27M3 11h4V5h6%27 stroke=%27white%27 stroke-width=%272%27 fill=%27none%27/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 fill=%27%2317181a%27/%3E%3Cpath d=%27M3 11h4V5h6%27 stroke=%27%23d9541e%27 stroke-width=%272%27 fill=%27none%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body data-repo="https://github.com/AlexaGonzalesTuesta/legacy-to-lakehouse">
-<div id="offline" class="banner" hidden role="status">You are offline. The last loaded run is still shown.</div>
-<header class="topbar">
-  <div class="brand">Legacy to Lakehouse</div>
-  <div class="catalog" id="catalogLabel">Recall operations database <span class="arrow">→</span> Databricks lakehouse</div>
-  <div class="scanned" id="scannedLabel"></div>
-</header>
-<main id="app" aria-live="polite"><p class="state">Loading the latest pipeline run…</p></main>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">Legacy to Lakehouse</div>
+    <nav id="nav" aria-label="Views"></nav>
+    <div class="side-foot" id="scannedLabel"></div>
+  </aside>
+  <div class="col">
+    <div id="offline" class="banner" hidden role="status">Offline. Showing the last loaded run.</div>
+    <header class="crumbbar">
+      <ol class="crumbs" id="crumbs" aria-label="Breadcrumb"></ol>
+      <div class="more" id="more"></div>
+    </header>
+    <main id="app" aria-live="polite"><p class="state loading">Loading the latest pipeline run…</p></main>
+  </div>
+</div>
+<dialog id="about" aria-labelledby="aboutTitle"></dialog>
 <script src="app.js"></script>
 </body>
 </html>
